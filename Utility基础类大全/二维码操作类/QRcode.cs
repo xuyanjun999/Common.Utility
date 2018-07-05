@@ -99,6 +99,39 @@ namespace Common.Utility
                 return null;
             }
         }
+        
+        #region 生成base64编码格式的二维码
+    /// <summary>
+    /// 生成base64编码格式的二维码
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
+    public static string MakeBase64QrCode(string content, int qrCodeVersion = 0, int qrCodeScale = 8)
+    {
+        string result = string.Empty;
+        //初始化二维码生成工具
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder();
+        qrCodeEncoder.QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE;
+        qrCodeEncoder.QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.M;
+        qrCodeEncoder.QRCodeVersion = qrCodeVersion;
+        qrCodeEncoder.QRCodeScale = qrCodeScale;
+
+        //将字符串生成二维码图片
+        using (Bitmap image = qrCodeEncoder.Encode(content, Encoding.Default))
+        {
+            //保存为PNG到内存流  
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, ImageFormat.Png);
+
+                //输出二维码图片
+                result = Convert.ToBase64String(ms.GetBuffer());
+            }
+        }
+        return result;
+    }
+    #endregion
+
     }
 }
 
